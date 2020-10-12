@@ -26,12 +26,6 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         super();
     }
 
-    /* Remote method implementation */
-    public byte[] sendThisBack(byte[] data) throws RemoteException {
-        System.out.println("Data back to client");
-        return data;
-    }
-
     public String leer(String nombre, int posicion, int cantidad) throws RemoteException {
         System.out.println("Nombre: " + nombre + " Posicion: " + posicion + " Cantidad: " + cantidad);
         return "asdasdads";
@@ -40,16 +34,14 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
     public int escribir(String nombre, int cantidad, byte[] buffer) throws RemoteException {
         String ruta = "/pdytr/Practica-2/ejercicio-3/servidor/archivos/" + nombre;
         File file = new File(ruta);
-    
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            OutputStream output = new FileOutputStream(file);
-
-            output.write(buffer, (int) file.length(), cantidad);
+            if (file.createNewFile())
+                System.out.println("Se creo el archivo " + nombre);          
+            OutputStream output = new FileOutputStream(file, true);//true para que no se pisen los datos
+            output.write(buffer, 0, cantidad);
         } catch (Exception e) {
             System.out.println("Error al escribir el archivo.");
+            e.printStackTrace();
         }
         return cantidad;
     };

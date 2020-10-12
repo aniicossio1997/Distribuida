@@ -9,40 +9,40 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.rmi.Naming; /* lookup */
 import java.rmi.registry.Registry; /* REGISTRY_PORT */
+import java.util.Scanner;
 
 public class Cliente {
 
-    private static int bufferSize = 1000;
+    private static int bufferSize = 2048;
 
     private static void escribir(IfaceRemoteClass remote, String nombre) {
         final String ruta = "/pdytr/Practica-2/ejercicio-3/cliente/archivos/" + nombre;
         try {
-
             File archivo = new File(ruta);
             InputStream input = new FileInputStream(archivo);
-            int i = 0; // cantidad leida hasta el momento
+            int leido = 0; // cantidad leida en un read
             byte[] buffer = new byte[bufferSize];
-            while (i != -1) {
-                i = input.read(buffer, i, bufferSize);
-                if (i != -1) {
-                    remote.escribir(nombre, i, buffer);
+            Long total = archivo.length();
+            while (leido > -1) {                      
+                leido = input.read(buffer, 0, bufferSize);          
+                if (leido > 0) { // si no hay error ni se termino el archivo
+                    remote.escribir(nombre, leido, buffer);
                 }
             }
         } catch (Exception e) {
-            System.out.println("Se produjo un error");
+            System.out.println("Se produjo un error.");
+            e.printStackTrace();
         }
+        System.out.println("Transferencia completada exitosamente.");    
     }
 
-    public static void main(String[] args) {
-        /* Look for hostname and msg length in the command line */
-        if (args.length != 1) {
-            System.out.println("1 argument needed: (remote) hostname");
-            System.exit(1);
-        }
+    public static void main(String[] args) {  
         try {
-            String rname = "//" + args[0] + ":" + Registry.REGISTRY_PORT + "/remote";
+            String rname = "//localhost:" + Registry.REGISTRY_PORT + "/remote";
             IfaceRemoteClass remote = (IfaceRemoteClass) Naming.lookup(rname);
-            escribir(remote, "logo.png");
+            Scanner keyboard = new Scanner(System.in);
+            System.out.println("Ingrese el nombre del archivo: ");      
+            escribir(remote, keyboard.next());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 /* This interface will need an implementing class */
 public interface IfaceRemoteClass extends Remote {
 
-    public String leer(String nombre, int posicion, int cantidad) throws RemoteException;
+    public IResponse leer(String nombre, int posicion, int cantidad) throws RemoteException;
     
     public int escribir( String nombre, int cantidad, byte[] buffer ) throws RemoteException;
 }

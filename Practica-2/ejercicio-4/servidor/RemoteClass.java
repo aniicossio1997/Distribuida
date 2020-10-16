@@ -28,13 +28,12 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
 
     public void metodoRemoto(String identificador) throws RemoteException {
         while (true) {
+            System.out.println("Servidor -> Atendiendo a : " + identificador);
             try {
                 Thread.sleep(5000);
             } catch (Exception e) {
                 System.out.println("Servidor -> Error de interrupcion - " + identificador);
-            }
-           
-            System.out.println("Servidor -> Atendiendo a : " + identificador);
+            }         
         }
 
     };

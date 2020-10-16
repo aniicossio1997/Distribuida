@@ -25,7 +25,7 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
      */
     private static final long serialVersionUID = 1L;
 
-    private static int bufferSize = 2048;
+    private static int bufferSize = 32768;
 
     protected RemoteClass() throws RemoteException {
         super();
@@ -60,12 +60,29 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
         return respuesta;
     };
 
+    public boolean crearArchivo(String nombre) throws RemoteException{
+        String ruta = "/pdytr/Practica-2/ejercicio-3/servidor/archivos/" + nombre;
+        File file = new File(ruta);
+        boolean success = false;
+        if(file.exists()){
+            if(file.delete())
+                 System.out.println("Servidor -> Se elimino el archivo "+nombre);;
+        }
+        try {
+            success = file.createNewFile();
+        } catch (Exception e) {
+            System.out.println("Servidor -> Se produjo un error.");
+            e.printStackTrace();
+        }
+        return success;
+    }
+
     public int escribir(String nombre, int cantidad, byte[] buffer) throws RemoteException {
         String ruta = "/pdytr/Practica-2/ejercicio-3/servidor/archivos/" + nombre;
         File file = new File(ruta);
         try {
-            if (file.createNewFile())
-                System.out.println("Servidor -> Se creo el archivo " + nombre);
+           // if (file.createNewFile())
+          //      System.out.println("Servidor -> Se creo el archivo " + nombre);
             OutputStream output = new FileOutputStream(file, true);// true para que no se pisen los datos
             output.write(buffer, 0, cantidad);
             output.close();

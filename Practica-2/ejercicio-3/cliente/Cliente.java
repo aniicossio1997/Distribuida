@@ -11,11 +11,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.Naming; /* lookup */
 import java.rmi.registry.Registry; /* REGISTRY_PORT */
-import java.util.Scanner;
 
 public class Cliente {
 
-    private static int bufferSize = 2048;
+    private static int bufferSize = 8192;
 
     static String getCopyName (String str) {
         if (str == null) return null;
@@ -33,6 +32,8 @@ public class Cliente {
                 System.out.println("Cliente -> No se encontro el archivo.");
                 return false;
             }
+            if(remote.crearArchivo(nameInServer))
+                System.out.println("Cliente -> Se creo el archivo en el servidor.");;
             InputStream inputStream = new FileInputStream(file);
             int read = 0; // cantidad leida en un read
             byte[] buffer = new byte[bufferSize];
@@ -55,6 +56,8 @@ public class Cliente {
     private static boolean leer(IfaceRemoteClass remote, String name) {
         String route = "/pdytr/Practica-2/ejercicio-3/cliente/archivos/" + name;
         File file = new File(route);
+        if(file.delete())
+            System.out.println("Cliente -> Se elimino el archivo " + name);//eliminamos el archivo si ya existe
         long offset = 0;
         IResponse response = new Response();
         response.setCantidad(0);
@@ -98,7 +101,7 @@ public class Cliente {
                 System.exit(1);
             }
             String fileName = args[0];
-            System.out.print("Cliente -> Nombre del archivo: "+fileName);
+            System.out.println("Cliente -> Nombre del archivo: "+fileName);
             String rname = "//localhost:" + Registry.REGISTRY_PORT + "/remote";
             IfaceRemoteClass remote = (IfaceRemoteClass) Naming.lookup(rname);
             //Scanner keyboard = new Scanner(System.in);

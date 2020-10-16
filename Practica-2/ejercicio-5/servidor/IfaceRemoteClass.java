@@ -11,6 +11,6 @@ import java.rmi.RemoteException;
 /* This interface will need an implementing class */
 public interface IfaceRemoteClass extends Remote {
 
-    public void metodoRemoto(String identificador) throws RemoteException;
+    public void metodoInutil() throws RemoteException;
   
 }

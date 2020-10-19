@@ -16,6 +16,8 @@ public class Cliente {
 
     private static int bufferSize = 8192;
 
+    private static IfaceRemoteClass remote;
+
     static String getCopyName (String str) {
         if (str == null) return null;
         int pos = str.lastIndexOf(".");
@@ -23,7 +25,7 @@ public class Cliente {
         return str.substring(0, pos)+"_copy"+str.substring(pos, str.length());
     }
     
-    private static boolean escribir(IfaceRemoteClass remote, String name, boolean asCopy) {
+    private static boolean escribir(String name, boolean asCopy) {
         final String ruta = "/pdytr/Practica-2/ejercicio-3/cliente/archivos/" + name;
         String nameInServer = asCopy ? getCopyName(name) : name;
         try {
@@ -53,11 +55,9 @@ public class Cliente {
         return true;
     }
 
-    private static boolean leer(IfaceRemoteClass remote, String name) {
+    private static boolean leer(String name) {
         String route = "/pdytr/Practica-2/ejercicio-3/cliente/archivos/" + name;
-        File file = new File(route);
-        if(file.delete())
-            System.out.println("Cliente -> Se elimino el archivo " + name);//eliminamos el archivo si ya existe
+        File file = new File(route);      
         long offset = 0;
         IResponse response = new Response();
         response.setCantidad(0);
@@ -65,6 +65,8 @@ public class Cliente {
         try {
             response = remote.leer(name, (int) offset, bufferSize);
             if (response.getCantidad() > -1) {
+                if(file.delete())
+                  System.out.println("Cliente -> Se elimino el archivo " + name);//eliminamos el archivo si ya existe
                 if (file.createNewFile())
                     System.out.println("Cliente -> Se creo el archivo " + name);
                 output = new FileOutputStream(file, true);// true para que no se pisen los datos
@@ -103,14 +105,10 @@ public class Cliente {
             String fileName = args[0];
             System.out.println("Cliente -> Nombre del archivo: "+fileName);
             String rname = "//localhost:" + Registry.REGISTRY_PORT + "/remote";
-            IfaceRemoteClass remote = (IfaceRemoteClass) Naming.lookup(rname);
-            //Scanner keyboard = new Scanner(System.in);
-            //System.out.println("Ingrese el nombre del archivo: ");
-            //fileName= keyboard.next();
-           // keyboard.close();
-            boolean success = leer(remote, fileName);
+            remote = (IfaceRemoteClass) Naming.lookup(rname);
+            boolean success = leer(fileName);
             if(success){
-             escribir(remote, fileName, true);
+             escribir(fileName, true);
             }          
             
         } catch (Exception e) {

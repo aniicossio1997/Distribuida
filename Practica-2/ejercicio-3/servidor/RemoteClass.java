@@ -27,12 +27,13 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
 
     private static int bufferSize = 32768;
 
+    private static String directorioArchivos = "/pdytr/Practica-2/ejercicio-3/servidor/archivos/";
     protected RemoteClass() throws RemoteException {
         super();
     }
 
     public IResponse leer(String nombre, int posicion, int cantidad) throws RemoteException {
-        String ruta = "/pdytr/Practica-2/ejercicio-3/servidor/archivos/" + nombre;
+        String ruta = directorioArchivos + nombre;
         File file = new File(ruta);
         IResponse respuesta = new Response();
 
@@ -40,6 +41,7 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
             respuesta.setCantidad(-1);
             return respuesta;
         }
+        
         try {
             InputStream input = new FileInputStream(file);
             int leido = 0; // cantidad leida en un read
@@ -61,7 +63,7 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
     };
 
     public boolean crearArchivo(String nombre) throws RemoteException{
-        String ruta = "/pdytr/Practica-2/ejercicio-3/servidor/archivos/" + nombre;
+        String ruta = directorioArchivos + nombre;
         File file = new File(ruta);
         boolean success = false;
         if(file.exists()){
@@ -79,10 +81,9 @@ public class RemoteClass extends UnicastRemoteObject implements IfaceRemoteClass
 
     public int escribir(String nombre, int cantidad, byte[] buffer) throws RemoteException {
         String ruta = "/pdytr/Practica-2/ejercicio-3/servidor/archivos/" + nombre;
-        File file = new File(ruta);
-        try {
-           // if (file.createNewFile())
-          //      System.out.println("Servidor -> Se creo el archivo " + nombre);
+        File file = new File(ruta);   
+        try {        
+            file.createNewFile();
             OutputStream output = new FileOutputStream(file, true);// true para que no se pisen los datos
             output.write(buffer, 0, cantidad);
             output.close();

@@ -24,15 +24,5 @@ public class Servidor {
             System.out.println(e.getMessage());
         }
 
-        /*while (true) {
-            System.out.println("holaaa mi anita");
-            try {
-                Thread.sleep(10000);
-            } catch (Exception e) {
-                System.out.println("error al esperar");
-            }
-            
-        }*/
-
     }
 }

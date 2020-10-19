@@ -17,22 +17,21 @@ public class Cliente {
     {
         double sum = 0.0, standardDeviation = 0.0;
         int length = numArray.length;
-
         for(long num : numArray) {
             sum += num;
         }
-
         double mean = sum/length;
-
         for(long num: numArray) {
             standardDeviation += Math.pow(num - mean, 2);
         }
-
         return Math.sqrt(standardDeviation/length);
     }
 
+
+
     private static void testTime() {
         int sampleSize=10000;
+        System.out.println("Tamano de muestra: " + sampleSize);       
         long start, end, diff;
         long[] samples = new long[sampleSize];
         double total = 0L;
@@ -44,13 +43,11 @@ public class Cliente {
                 diff = end - start;
                 samples[i] =diff;
                 total = total + diff;  
-                //System.out.println(start);
             }
             final double std = calcularDE(samples);
-            System.out.println("Total: " + total + "ms");
-            
+            System.out.println("Total: " + total + "ms");           
             System.out.println("Promedio: " + total / sampleSize + "ms");
-            System.out.println("Desviacion estandar: " + std + "ms");
+            System.out.println("Desviacion estandar: " + std + "ms");         
         } catch (RemoteException e) {
             e.printStackTrace();
         }

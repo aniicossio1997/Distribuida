@@ -1,0 +1,1 @@
+Los programas ya deben estar compilados antes de correr el bash.

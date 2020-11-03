@@ -61,5 +61,6 @@ public class Cliente {
             e.printStackTrace();
         }
         testTime();
+        System.out.println("Finalizado, ya puede detener la ejecucion.");       
     }
 }

@@ -18,7 +18,7 @@ public class Servidor {
             System.out.println("Servidor -> escuchando...");
         } catch (Exception e) {
             System.out.println("Servidor -> Hey, an error occurred at Naming.rebind");
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
     }

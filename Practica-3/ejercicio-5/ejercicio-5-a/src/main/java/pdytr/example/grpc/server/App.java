@@ -1,6 +1,7 @@
-package pdytr.example.grpc;
-import io.grpc.*;
-import pdytr.example.grpc.server.FileServiceImpl;
+package pdytr.example.grpc.server;
+
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
 
 public class App
 {
@@ -8,7 +9,7 @@ public class App
     {
       // Create a new server to listen on port 8080
       Server server = ServerBuilder.forPort(8080)
-        .addService(new FileServiceImpl())
+        .addService(new ServiceImpl())
         .build();
       // Start the server
       server.start();

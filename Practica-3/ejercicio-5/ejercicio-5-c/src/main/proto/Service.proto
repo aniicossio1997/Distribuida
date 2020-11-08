@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pdytr.example.grpc;
+
+message Request {
+   int32 id = 1;
+   int32 timeout = 2;
+}
+message Response {}
+// Defining a Service, a Service can have multiple RPC operations
+service Service {
+  // Define a RPC operation
+   rpc hacerAlgoConTimeout(Request) returns (Response);
+}
+

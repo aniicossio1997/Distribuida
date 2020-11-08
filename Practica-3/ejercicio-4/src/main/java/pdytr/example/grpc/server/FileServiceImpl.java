@@ -23,11 +23,7 @@ public class FileServiceImpl extends FileServiceGrpc.FileServiceImplBase {
             FileServiceOuterClass.ReadRequest request,
             StreamObserver<FileServiceOuterClass.ReadResponse> responseObserver
     ) {
-        System.out.println("Read Request: ");
-
-        //System.out.println("   "+ request);
-        //System.out.println("   "+ request.getName());
-
+    
         FileServiceOuterClass.ReadResponse response = null;
 
         String ruta = directorioArchivos + request.getName();
@@ -62,12 +58,11 @@ public class FileServiceImpl extends FileServiceGrpc.FileServiceImplBase {
                 e.printStackTrace();
             }
         }
-        // Use responseObserver to send a single response back
+
         responseObserver.onNext(response);
 
-        // When you are done, you must call onCompleted.
         responseObserver.onCompleted();
-        System.out.println("===========================================================");
+        //System.out.println("===========================================================");
     }
 
     @Override
@@ -75,10 +70,7 @@ public class FileServiceImpl extends FileServiceGrpc.FileServiceImplBase {
             FileServiceOuterClass.WriteRequest request,
             StreamObserver<FileServiceOuterClass.WriteResponse> responseObserver
     ) {
-        System.out.println("Write Request: ");
-
-        //System.out.println("   " + request);
-        // System.out.println("   " + request.getName());
+        //System.out.println("Write Request: ");
 
         FileServiceOuterClass.WriteResponse response = null;
 
@@ -87,9 +79,8 @@ public class FileServiceImpl extends FileServiceGrpc.FileServiceImplBase {
         File file = new File(ruta);
 
         try {
-            if (file.createNewFile()) {
+            if (file.createNewFile())
                 System.out.println("Servidor -->Se creo el archivo " + request.getName());
-            }
 
             OutputStream output = new FileOutputStream(file, true);// true para que no se pisen los datos
             output.write(request.getData().toByteArray(), 0, request.getCount());
@@ -99,7 +90,6 @@ public class FileServiceImpl extends FileServiceGrpc.FileServiceImplBase {
                     .setCount(request.getCount())
                     .build();
 
-            // Use responseObserver to send a single response back
             responseObserver.onNext(response);
 
         } catch (Exception e) {
@@ -107,11 +97,7 @@ public class FileServiceImpl extends FileServiceGrpc.FileServiceImplBase {
             e.printStackTrace();
         }
 
-
-        // When you are done, you must call onCompleted.
         responseObserver.onCompleted();
-        System.out.println("===========================================================");
+        //System.out.println("===========================================================");
     }
-
-
 }

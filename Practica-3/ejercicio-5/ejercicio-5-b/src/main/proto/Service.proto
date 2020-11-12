@@ -2,9 +2,7 @@ syntax = "proto3";
 
 package pdytr.example.grpc;
 
-message Request {
-   int32 id = 1;
-}
+message Request {}
 message Response {}
 // Defining a Service, a Service can have multiple RPC operations
 service Service {

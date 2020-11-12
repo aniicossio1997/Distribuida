@@ -6,6 +6,7 @@ import pdytr.example.grpc.FileServiceGrpc;
 import pdytr.example.grpc.FileServiceOuterClass;
 
 import java.io.*;
+import java.util.Iterator;
 
 public class Client {
 
@@ -16,7 +17,7 @@ public class Client {
     private static String clientId = "Cliente ";
 
     private static String filesFolder =
-            "/pdytr/Practica-3/ejercicio-4/src/main/java/pdytr/example/grpc/client/files/";
+            "files/client/";
 
     public static void main(String[] args) throws Exception {
 
@@ -45,12 +46,19 @@ public class Client {
 
         System.out.println(clientId + " -> Operacion: "+operation);
 
-        if(operation.equalsIgnoreCase("read"))
-            read(fileName);
-        else if (operation.equalsIgnoreCase("write"))
-            write(fileName);
-        else
-            System.out.println(clientId + " --> Opearacion invalida");
+        switch (operation){
+            case "read":
+                read(fileName);
+                break;
+            case"write":
+                write(fileName);
+                break;
+            case "readServerStreaming":
+                readServerStreaming(fileName);
+                break;
+            default:
+                System.out.println(clientId + " --> Opearacion invalida");
+        }
 
         channel.shutdownNow();
     }
@@ -67,11 +75,16 @@ public class Client {
                             .setName(name)
                             .setPos(0)
                             .setCount(bufferSize).build();
+
+            long startTimestamp = System.currentTimeMillis();
+
             response = stub.read(request);
             if (response.getCount() > -1) {
+
                 if (file.createNewFile()) System.out.println(
                         clientId +" -> Se creo el archivo " + name
                 );
+
                 output = new FileOutputStream(file, true); // true para que no se pisen los datos
                 output.write(response.getData().toByteArray(), 0, response.getCount());
                 offset = offset + response.getCount();
@@ -92,8 +105,10 @@ public class Client {
                     offset = offset + response.getCount();
                 }
             }
+            long endTimestamp = System.currentTimeMillis();
             if (offset > 0) {
                 System.out.println(clientId +" -> Transferencia completada.");
+                System.out.println(clientId +" -> Tiempo: "+(endTimestamp - startTimestamp)+"ms");
                 output.close();
                 return;
             }
@@ -137,5 +152,58 @@ public class Client {
             return;
         }
         System.out.println(clientId +" -> Transferencia completada exitosamente.");
+    }
+
+    private static void readServerStreaming(String name) {
+        String route = filesFolder + name;
+        File file = new File(route);
+        Iterator<FileServiceOuterClass.ReadResponse> responses;
+        OutputStream output;
+        try {
+            FileServiceOuterClass.ReadRequest request =
+                    FileServiceOuterClass.ReadRequest.newBuilder()
+                            .setName(name)
+                            .setPos(0)
+                            .setCount(bufferSize).build();
+            long startTimestamp = System.currentTimeMillis();
+            responses = stub.readServerStreaming(request);
+
+            FileServiceOuterClass.ReadResponse response = null;
+
+            if(responses.hasNext())
+                response= responses.next();
+            if (response.getCount() == -1) {
+                System.out.println(
+                        clientId +" -> No se encontro el archivo '" + name + "' en el servidor."
+                );
+                return;
+            }
+
+            file.delete();
+
+            // true para que no se pisen los datos
+            output = new FileOutputStream(file, true);
+
+            if (file.createNewFile()) System.out.println(
+                    clientId +" -> Se creo el archivo " + name
+            );
+
+            output.write(response.getData().toByteArray(), 0, response.getCount());
+
+            while(responses.hasNext()){
+                response = responses.next();
+
+                if(response.getCount() > -1) {
+                    output.write(response.getData().toByteArray(), 0, response.getCount());
+                }
+            }
+            long endTimestamp = System.currentTimeMillis();
+            System.out.println(clientId +" -> Tiempo: "+(endTimestamp - startTimestamp)+"ms");
+            System.out.println(clientId +" -> Transferencia completada.");
+            output.close();
+        } catch (Exception e) {
+            System.out.println(clientId +" -> Error al escribir el archivo.");
+            e.printStackTrace();
+        }
     }
 }

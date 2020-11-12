@@ -20,28 +20,16 @@ public class Client {
         ServiceGrpc.ServiceBlockingStub stub = ServiceGrpc.newBlockingStub(
                 channel
         );
-
-        System.out.println("Cliente --> Realiza un pedido al servidor con deadline de 10 segundos");
-
-        ServiceOuterClass.Request request = ServiceOuterClass.Request.newBuilder().setId(0).build();
-        ServiceOuterClass.Response response;
-        try {
-            response = stub.withDeadlineAfter(10000, TimeUnit.MILLISECONDS).hacerAlgo(request);
-            Thread.sleep(7000);
-        } catch (io.grpc.StatusRuntimeException e) {
-            printError(e);
-        }
-
+        
         for (int i = 1; i <= 10; i++) {
-            System.out.println("Cliente --> Realiza un pedido al servidor con deadline de 9 segundos (pedido " + i + "/10)");
-            request = ServiceOuterClass.Request.newBuilder().setId(i).build();
+            System.out.println("Cliente --> Realiza un pedido al servidor con timeout de 459000ns segundos (pedido " + i + "/10)");
             try {
-                response = stub.withDeadlineAfter(9000, TimeUnit.MILLISECONDS).hacerAlgo(request);
+                stub.withDeadlineAfter(459000 , TimeUnit.NANOSECONDS).hacerAlgo(null);
             } catch (io.grpc.StatusRuntimeException e) {
                 printError(e);
             }
             //se duerme solo para darle tiempo al servidor y que no se defase todo cuando imprimen
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         }
 
         channel.shutdownNow();

@@ -1,7 +1,6 @@
 syntax = "proto3";
 package pdytr.example.grpc;
 
-// Request payload
 message ReadRequest {
   string name = 1;
   int32 pos = 2;
@@ -13,7 +12,6 @@ message ReadResponse {
   bytes data = 2;
 }
 
-// Request payload
 message WriteRequest {
   string name = 1;
   int32 count = 3;
@@ -24,10 +22,9 @@ message WriteResponse {
   int32 count = 1;
 }
 
-// Defining a Service, a Service can have multiple RPC operations
 service FileService {
-  // Define a RPC operation
    rpc read(ReadRequest) returns (ReadResponse);
+   rpc readServerStreaming(ReadRequest) returns (stream ReadResponse);
    rpc write(WriteRequest) returns (WriteResponse);
 }
 

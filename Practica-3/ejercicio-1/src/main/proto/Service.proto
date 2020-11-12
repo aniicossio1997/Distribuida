@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pdytr.example.grpc;
+
+message Request {}
+message Response {}
+// Defining a Service, a Service can have multiple RPC operations
+service Service {
+   rpc operacion1(Request) returns (Response);
+   rpc operacion2(Request) returns (Response);
+   rpc operacion4(Request) returns (Response);
+}
+
